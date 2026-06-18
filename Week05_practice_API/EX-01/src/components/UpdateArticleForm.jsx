@@ -1,6 +1,9 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 export default function UpdateArticleForm() {
+  const { id } = useParams();
   const [form, setForm] = useState({
     title: '',
     content: '',
@@ -11,8 +14,13 @@ export default function UpdateArticleForm() {
 
   // Fetch to prefill a form and update an existing article
   useEffect(() => {
-
-  }, []);
+    axios.get(`http://localhost:3000/articles/${id}`)
+    .then( res => {
+      setForm(res.data);
+      console.log("articles load successfully")
+    })
+    .catch( err => console.error(err))
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,6 +29,11 @@ export default function UpdateArticleForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Update article with axios
+    axios.put(`http://localhost:3000/articles/${id}`, form)
+    .then(res => {
+      alert("updated!!")
+    })
+    .catch(err => console.error(err))
   };
 
   return (

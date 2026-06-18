@@ -1,10 +1,12 @@
 import express from "express";
+import cors from "cors";
 import { articles, categories, journalists } from "./models/data.js";
 import  articlesRouter  from "./routes/articleRoutes.js";
 import journalistsRouter from "./routes/journalistRoutes.js";
 import categoriesRouter from "./routes/categoryRoutes.js";
 
 const app = express();
+app.use(cors())
 app.use(express.json());
 
 const PORT = 3000;

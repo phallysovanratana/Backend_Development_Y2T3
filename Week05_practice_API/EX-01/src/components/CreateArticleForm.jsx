@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 
@@ -16,6 +17,12 @@ export default function ArticleForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Validate form data
+    axios.post('http://localhost:3000/articles', form)
+    .then (res => {
+      console.log(res.data)
+      alert("Article created!");
+    })
+    .catch( err => console.error(err))
   };
 
   return (

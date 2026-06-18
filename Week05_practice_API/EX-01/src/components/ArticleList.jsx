@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import axios from "axios";
+import ArticlePage from './ArticleViewer';
+
 
 export default function ArticleList() {
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   // Fetch all articles when component mounts
   useEffect(() => {
@@ -9,11 +13,24 @@ export default function ArticleList() {
   }, []);
 
   const fetchArticles = async () => {
-    // Fetch articles from the API
+    // Fetch articles from the API4
+    axios.get("http://localhost:3000/articles")
+    .then(res => {
+      console.log("API Response:", res.data);
+      setArticles(res.data)
+    })
+    .catch(err => console.error(err));
   };
 
   const deleteArticle = async (id) => {
     // Delete an article by ID
+    axios.delete(`http://localhost:3000/articles/${id}`)
+    .then( res => {
+      fetchArticles();
+      alert(`articles ${id} have been deleted`)
+    })
+    .catch(err => console.error(err))
+
   };
 
   return (
@@ -33,9 +50,11 @@ export default function ArticleList() {
             <button onClick={() => deleteArticle(article.id)}>Delete</button>
             <button onClick={() => {
               // Navigate to update article form with article ID /articles/update/${article.id}
+              navigate(`/update/${article.id}`)
             }}>Update</button>
             <button onClick={() => {
               // Navigate to view article details with article ID /articles/${article.id}
+              navigate(`/articles/${article.id}`)
             }}>View</button>
           </li>
         ))}
