@@ -1,10 +1,8 @@
+// ArticleList.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getArticles, removeArticle } from "../services/api";
 
-//
-// ArticleList component
-//
 export default function ArticleList() {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +11,7 @@ export default function ArticleList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchArticles(); // Fetch all articles when component mounts
+    fetchArticles();
   }, []);
 
   const fetchArticles = async () => {
@@ -34,7 +32,7 @@ export default function ArticleList() {
     setError("");
     try {
       await removeArticle(id);
-      await fetchArticles(); // refresh the list
+      await fetchArticles();
     } catch (err) {
       setError("Failed to delete article.");
     } finally {
@@ -43,7 +41,6 @@ export default function ArticleList() {
   };
 
   const handleView = (id) => navigate(`/articles/${id}`);
-
   const handleEdit = (id) => navigate(`/articles/${id}/edit`);
 
   return (
@@ -70,7 +67,9 @@ function ArticleCard({ article, onView, onEdit, onDelete }) {
   return (
     <div className="article-card">
       <div className="article-title">{article.title}</div>
-      <div className="article-author">By {article.journalist}</div>
+      <div className="article-author">
+        By {article.journalist_name || article.journalist || "Unknown"}
+      </div>
 
       <div className="article-actions">
         <button className="button-tertiary" onClick={() => onEdit(article.id)}>

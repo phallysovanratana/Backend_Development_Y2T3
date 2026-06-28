@@ -1,3 +1,4 @@
+// ArticleForm.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getArticleById, createArticle, updateArticle } from "../services/api";
@@ -9,7 +10,7 @@ export default function ArticleForm({ isEdit }) {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    journalist: "",
+    journalist_id: "",
     category: "",
   });
 
@@ -20,14 +21,19 @@ export default function ArticleForm({ isEdit }) {
     if (isEdit && id) {
       fetchArticle(id);
     }
-  }, []);
+  }, [isEdit, id]);
 
   const fetchArticle = async (id) => {
     setIsLoading(true);
     setError("");
     try {
       const article = await getArticleById(id);
-      setFormData(article);
+      setFormData({
+        title: article.title || "",
+        content: article.content || "",
+        journalist_id: article.journalist_id || "",
+        category: article.category || "",
+      });
     } catch (err) {
       setError("Failed to load article. Please try again.");
     } finally {
@@ -82,23 +88,24 @@ export default function ArticleForm({ isEdit }) {
         />
         <br />
         <input
-          name="journalist"
-          value={formData.journalist}
+          name="journalist_id"
+          value={formData.journalist_id}
           onChange={handleChange}
-          placeholder="Journalist ID"
+          placeholder="Journalist ID (e.g., 1, 2, 3...)"
           required
+          type="number"
         />
         <br />
         <input
           name="category"
           value={formData.category}
           onChange={handleChange}
-          placeholder="Category ID"
+          placeholder="Category"
           required
         />
         <br />
         <button className="main" type="submit">
-          {isEdit ? "Edit " : "Create"}
+          {isEdit ? "Update" : "Create"}
         </button>
       </form>
     </>

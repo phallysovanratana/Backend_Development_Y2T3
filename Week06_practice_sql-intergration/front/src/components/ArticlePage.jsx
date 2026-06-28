@@ -1,31 +1,31 @@
-import { useParams } from "react-router-dom";
+// ArticlePage.jsx
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getArticleById } from "../services/api";
 
 export default function ArticlePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchArticle();
-  }, []);
+    loadArticle();
+  }, [id]);
 
-
-  const fetchArticle = async () => {
+  const loadArticle = async () => {
     try {
       setLoading(true);
-
-      const found = getArticleById(id);
-      if (found) {
-        setArticle(found);
-        setError("");
-      } else {
-        setArticle(null);
+      setError("");
+      const data = await getArticleById(id);
+      if (!data) {
         setError("Article not found.");
+        setArticle(null);
+        return;
       }
+      setArticle(data);
     } catch (err) {
       setError("Failed to fetch article.");
     } finally {
@@ -38,15 +38,29 @@ export default function ArticlePage() {
   if (!article) return <div>No article found.</div>;
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>{article.title}</h2>
+
       <p>{article.content}</p>
-      <div>
-        <strong>Journalist:</strong> {article.journalist}
-      </div>
-      <div>
+
+      {/* Updated journalist link - using p tag with better styling */}
+      <p 
+        onClick={() => navigate(`/journalists/${article.journalist_id}/articles`)}
+        style={{ 
+          cursor: "pointer", 
+          color: "var(--main-color)", 
+          fontWeight: "bold",
+          fontSize: "1.2em",
+          textDecoration: "underline",
+          display: "inline-block"
+        }}
+      >
+        {article.journalist_name}
+      </p>
+
+      <p>
         <strong>Category:</strong> {article.category}
-      </div>
+      </p>
     </div>
   );
 }
